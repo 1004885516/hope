@@ -1,0 +1,18 @@
+'use strict';
+const RES_BODY = {
+    SUCCESS:{
+        code: 200,
+        msg: '处理成功'
+    },
+    PARAM_ERR:{
+        code: 400,
+        msg: '参数错误'
+    },
+    ERR_SERVICE_WRONG:{
+        code: 0,
+        msg: '服务器报错'
+    }
+};
+module.exports = {
+    RES_BODY
+};
