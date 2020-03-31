@@ -1,3 +1,11 @@
 {
-  "extends": "eslint-config-egg"
+//  "extends": "eslint-config-egg",
+//  "rules": {
+//    "indent": ["off", 4], // off:禁用空格缩进规则
+//    "semi": 0,
+//    "no-irregular-whitespace":"off"
+//  },
+  "parserOptions": {
+    "ecmaVersion": 6
+  }
 }
