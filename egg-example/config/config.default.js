@@ -17,7 +17,9 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = ['errorHandler'];
-
+  config.logger = {
+    appLogName: `${appInfo.name}-web.log`
+  };
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',

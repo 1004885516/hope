@@ -8,7 +8,7 @@ const RES_BODY = {
         code: 400,
         msg: '参数错误'
     },
-    ERR_SERVICE_WRONG:{
+    SERVER_ERR:{
         code: 0,
         msg: '服务器报错'
     }
