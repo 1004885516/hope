@@ -20,6 +20,27 @@ module.exports = appInfo => {
   config.logger = {
     appLogName: `${appInfo.name}-web.log`
   };
+  config.mongoess = {
+    url: 'mongodb://127.0.0.1:27017',
+    option:{}
+  };
+  config.cors = {
+    origin:'*',
+    allowMethods:'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH'
+  };
+  // 跨域白名单
+  config.security = {
+    csrf:{
+      enable: false,
+    }
+  };
+  // 允许任何IP访问
+  config.cluster = {
+    listen: {
+      hostname: '0.0.0.0',
+      port: 7001,
+    }
+  };
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
