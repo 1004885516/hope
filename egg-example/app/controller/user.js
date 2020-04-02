@@ -1,14 +1,22 @@
 'use strict';
 
 const Controller = require('egg').Controller;
-
+const Common = require('../common');
+const { SystemError, Constant } = Common;
+const { ERR_CODE } = Constant.ERR_CODE;
+/*
+    调试代码
+ */
 class User extends Controller {
     async adduser() {
-        const { ctx, app} = this;
-        // throw new SystemError({code: ERR_CODE['PARAM_ERR'], message:'测试错误'});
-        console.log('body', ctx.request.body)
-        ctx.validate({ userName: {type:'string'} });
-        ctx.setSuccessBody('hi, egg');
+        const { ctx } = this;
+        const body = ctx.request.body;
+        const createRule = {
+            userName: { type:'string' },
+            pwd:{ type: 'string'}
+        };
+        ctx.validate(createRule);
+        ctx.setSuccessBody(body);
     }
 }
 

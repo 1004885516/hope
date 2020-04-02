@@ -3,6 +3,7 @@ const _ = require('underscore');
 const Common = require('../common');
 const Parameter = require('parameter')
 
+const SystemError = Common.SystemError;
 const { ERR_TYPE } = Common.Constant;
 const { ERR_CODE } = Common.Constant.ERR_CODE;
 const { RES_BODY } = Common.Constant.RES_BODY;
@@ -45,10 +46,7 @@ const extendCtx = {
         data = data || this.request.body;
         const errors = this.app.validator.validate(rules, data);
         if (errors) {
-            this.throw(422, 'Validation Failed', {
-                code: 'invalid_param',
-                errors,
-            });
+            this.throw(new SystemError({code:ERR_CODE['INVALID_PARAM_ERR'], message:`参数验证失败:${errors[0].field} ${errors[0].message}`}));
         }
     },
 };

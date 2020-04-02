@@ -4,7 +4,7 @@ const RES_BODY = {
         code: 200,
         msg: '处理成功'
     },
-    PARAM_ERR:{
+    INVALID_PARAM_ERR:{
         code: 400,
         msg: '参数错误'
     },

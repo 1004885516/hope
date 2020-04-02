@@ -41,6 +41,13 @@ module.exports = appInfo => {
       port: 7001,
     }
   };
+  /*
+    参数验证规则自定义
+   */
+  // exports.validate = {
+  //   // convert: false,
+  //   // validateRoot: false,
+  // };
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
