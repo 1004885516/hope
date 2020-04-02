@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('underscore');
 const Common = require('../common');
+const Parameter = require('parameter')
 
 const { ERR_TYPE } = Common.Constant;
 const { ERR_CODE } = Common.Constant.ERR_CODE;
@@ -39,6 +40,16 @@ const extendCtx = {
         }
         this.logger.info(`SuccessBody:${JSON.stringify(body)}`);
         this.body = body
+    },
+    validate(rules, data) {
+        data = data || this.request.body;
+        const errors = this.app.validator.validate(rules, data);
+        if (errors) {
+            this.throw(422, 'Validation Failed', {
+                code: 'invalid_param',
+                errors,
+            });
+        }
     },
 };
 module.exports = extendCtx;
