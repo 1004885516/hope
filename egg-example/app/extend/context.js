@@ -9,10 +9,10 @@ const { ERR_CODE } = Common.Constant.ERR_CODE;
 const { RES_BODY } = Common.Constant.RES_BODY;
 const extendCtx = {
     setErrBody(err){
-        this.logger.info('');
         let errCode;
         let msg;
         const body = {};
+        console.log('111111111111111', err)
         if(ERR_TYPE.isSystemError(err)){
             this.logger.error(`SystemError:${JSON.stringify(err)}`);
             errCode = err.code;

@@ -20,9 +20,14 @@ module.exports = appInfo => {
   config.logger = {
     appLogName: `${appInfo.name}-web.log`
   };
-  config.mongoess = {
-    url: 'mongodb://127.0.0.1:27017',
-    option:{}
+  config.mongoose = {
+    // url: 'mongodb://47.92.118.197:27017/epidemic',
+    url: 'mongodb://127.0.0.1:27017/epidemic',
+    options: {
+      autoReconnect: true,
+      reconnectTries: Number.MAX_VALUE,
+      bufferMaxEntries: 0,
+    },
   };
   config.cors = {
     origin:'*',
