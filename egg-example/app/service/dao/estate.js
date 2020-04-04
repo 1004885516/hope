@@ -16,6 +16,7 @@ class estate extends Service {
         return await this.ctx.model.Estate
             .find(data)
             .select(data.select || {})
+            .sort(data.sort || {})
             .exec();
     }
     async add(data) {

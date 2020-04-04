@@ -12,13 +12,12 @@ const extendCtx = {
         let errCode;
         let msg;
         const body = {};
-        console.log('111111111111111', err)
         if(ERR_TYPE.isSystemError(err)){
             this.logger.error(`SystemError:${JSON.stringify(err)}`);
             errCode = err.code;
             msg = err.message;
         }else {
-            this.logger.error(`Error:${JSON.stringify(err)}`);
+            this.logger.info(`Error-Stack:${err.stack.toString()}`);
             errCode = ERR_CODE.SERVER_ERR;
             msg = err.message
         }

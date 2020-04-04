@@ -18,11 +18,11 @@ module.exports = appInfo => {
   // add your middleware config here
   config.middleware = ['errorHandler'];
   config.logger = {
-    appLogName: `${appInfo.name}-web.log`
+    appLogName: `${appInfo.name}-web.log`,
   };
   config.mongoose = {
-    // url: 'mongodb://47.92.118.197:27017/epidemic',
-    url: 'mongodb://127.0.0.1:27017/epidemic',
+    // url: 'mongodb://47.92.118.197:27017/subject',
+    url: 'mongodb://127.0.0.1:27017/subject',
     options: {
       autoReconnect: true,
       reconnectTries: Number.MAX_VALUE,
