@@ -11,7 +11,13 @@ class UserController extends Controller {
     // 获取全量小区
     async getAllEstate(){
         const {ctx} = this;
-        const result = await ctx.service.dao.estate.getList({});
+        const body = ctx.request.body;
+        const id = body.id;
+        const VerifyRule = {
+          id:{ type: 'string'}
+        };
+        ctx.validate(VerifyRule, body);
+        const result = await ctx.service.dao.estate.getList({ _id:id });
         ctx.setSuccessBody(result);
     }
 }
