@@ -22,7 +22,7 @@ module.exports = appInfo => {
   };
   config.mongoose = {
     // url: 'mongodb://47.92.118.197:27017/subject',
-    url: 'mongodb://127.0.0.1:27017/subject',
+    url: 'mongodb://127.0.0.1:27017/DB01',
     options: {
       autoReconnect: true,
       reconnectTries: Number.MAX_VALUE,

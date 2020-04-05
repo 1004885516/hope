@@ -9,7 +9,7 @@ const { ERR_CODE } = Common.Constant.ERR_CODE;
 const { RES_BODY } = Common.Constant.RES_BODY;
 const extendCtx = {
     /**
-     * error处理中间件
+     * 构建errorBody
      * @param { Object } err 捕获到的错误
      * @return { Object } body 返回异常结果
      */
@@ -35,7 +35,7 @@ const extendCtx = {
         this.body = body;
     },
     /**
-     * 统一处理response body中间件
+     * 统一处理成功响应 response
      * @param { Object } data 处理成功的返回结果
      * @param { String } msg 描述，暂时不需要，预留参数
      * @return { Object } body 处理成功的返回结果
@@ -53,7 +53,7 @@ const extendCtx = {
         this.body = body
     },
     /**
-     * 参数验证中间件
+     * 参数验证
      * @param { Object } rules 参数验证规则
      * @param { Object } data request中的body对象
      * @return { Object } error 验证失败的结果

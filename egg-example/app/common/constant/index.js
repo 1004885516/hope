@@ -2,3 +2,4 @@
 exports.ERR_CODE = require('./errcode');
 exports.ERR_TYPE = require('./errtype');
 exports.RES_BODY = require('./response');
+exports.GLOBAL_FIELD = require('./globalfield');
