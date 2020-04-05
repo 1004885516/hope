@@ -6,9 +6,7 @@ const { SystemError, Constant } = Common;
 const { ERR_CODE } = Constant.ERR_CODE;
 const { GLOBAL_FIELD } = Constant.GLOBAL_FIELD;
 const { USER_CREATE, USER_LOGIN, GET_ONE_USER, GET_USER_LIST } = GLOBAL_FIELD.ACTION;
-/*
-    调试代码
- */
+
 class UserController extends Controller {
     constructor(ctx){
         super(ctx);
@@ -27,7 +25,7 @@ class UserController extends Controller {
             case GET_ONE_USER:   // 获取一条用户信息
                 user = await service.user.getOneUser(reqBody);
                 break;
-            case GET_USER_LIST:   // 获取一条用户信息
+            case GET_USER_LIST:   // 获取用户列表
                 user = await service.user.getUserList(reqBody);
                 break;
             default:
