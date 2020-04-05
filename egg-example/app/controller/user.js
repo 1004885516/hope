@@ -18,7 +18,7 @@ class UserController extends Controller {
         };
         ctx.validate(VerifyRule, body);
         const result = await ctx.service.dao.estate.getList({ _id:id });
-        ctx.setSuccessBody(result);
+        ctx.setSuccessBody(result, 'ok');
     }
 }
 

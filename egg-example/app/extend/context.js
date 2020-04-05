@@ -22,7 +22,7 @@ const extendCtx = {
             errCode = err.code;
             msg = err.message;
         }else {
-            this.logger.info(`Error-Stack:${err.stack.toString()}`);
+            this.app.emit('error', err, this); // 此处打印一条error级别的日志到node控制台
             errCode = ERR_CODE.SERVER_ERR;
             msg = err.message
         }
