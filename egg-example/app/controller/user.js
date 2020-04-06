@@ -25,7 +25,7 @@ class UserController extends Controller {
             case GET_ONE_USER:   // 获取一条用户信息
                 user = await service.user.getOneUser(reqBody);
                 break;
-            case GET_USER_LIST:   // 获取用户列表
+            case GET_USER_LIST:  // 获取用户列表
                 user = await service.user.getUserList(reqBody);
                 break;
             default:
