@@ -22,3 +22,7 @@ exports.validate = {
     enable: true,
     package: 'egg-validate',
 };
+exports.tracer = {
+    enable: true,
+    package: 'egg-tracer'
+};

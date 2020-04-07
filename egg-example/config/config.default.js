@@ -46,6 +46,10 @@ module.exports = appInfo => {
       port: 7001,
     }
   };
+  // 为每一次请求添加tracerId，方便追踪接口问题
+  config.tracer = {
+    Class: require('../app/common/my_tracer')
+  };
   /*
     参数验证规则自定义
    */
