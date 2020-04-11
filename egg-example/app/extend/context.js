@@ -4,7 +4,7 @@ const Common = require('../common');
 const Parameter = require('parameter')
 
 const SystemError = Common.SystemError;
-const { ERR_TYPE } = Common.Constant;
+const { ERR_TYPE } = Common.Validator;
 const { ERR_CODE } = Common.Constant.ERR_CODE;
 const { RES_BODY } = Common.Constant.RES_BODY;
 const extendCtx = {

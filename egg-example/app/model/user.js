@@ -1,7 +1,7 @@
 'use strict';
 
 /*
-    小区信息
+    用户信息
  */
 module.exports = app => {
     const mongoose = app.mongoose;
