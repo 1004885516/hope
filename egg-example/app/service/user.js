@@ -12,12 +12,6 @@ class UserService extends Service {
     }
     async createUserServer(reqBody) {
         const { ctx, dao } = this;
-        // const verifyRule = {
-        //     login: { type: 'string' },
-        //     password: { type: 'string' },
-        //     name: { type: 'string' }
-        // };
-        // ctx.validate(verifyRule, reqBody);
         const { login, password, name } = reqBody;
         ctx.logger.info(`createUserServer login:${ login } password:${ password } name:${name}`);
         const query = {
@@ -31,8 +25,8 @@ class UserService extends Service {
     }
     async getOneUser(reqBody) {
         const { ctx, dao } = this;
-        const verifyRule = { login: { type: 'string' } };
-        ctx.validate(verifyRule, reqBody);
+        // const verifyRule = { login: { type: 'string' } };
+        // ctx.validate(verifyRule, reqBody);
         const { login } = reqBody;
         ctx.logger.info(`getOneUser login:${ login }`);
         const query = {

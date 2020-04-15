@@ -10,11 +10,12 @@ const userBodySchema = Joi.object({
     login: Joi.string()
         .alphanum()  // 字母数字
         .min(6)
-        .max(12)
-        .required(),
+        .max(12),
     password: Joi.string()
         .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-    name: Joi.string()
+    name: Joi.string(),
+    page: Joi.number(),
+    limit: Joi.number(),
 })
 
 module.exports = {
