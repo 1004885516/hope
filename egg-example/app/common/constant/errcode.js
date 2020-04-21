@@ -5,6 +5,8 @@ const ERR_CODE = {
     'NO_DATA_ERR': 'NO_DATA_ERR', // 无数据返回
     'SERVER_ERR': 'SERVER_ERR', // 服务器异常
     'PORT_ERR': 'PORT_ERR', // 接口异常
+    'REPEAT_ACTION_ERR': 'REPEAT_ACTION_ERR', // 重复操作
+    'TOKEN_ERR': 'TOKEN_ERR'  // token 异常
 };
 module.exports = {
   ERR_CODE

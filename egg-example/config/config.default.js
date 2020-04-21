@@ -50,14 +50,9 @@ module.exports = appInfo => {
   config.tracer = {
     Class: require('../app/common/my_tracer')
   };
-  /*
-    参数验证规则自定义
-   */
-  // exports.validate = {
-  //   // convert: false,
-  //   // validateRoot: false,
-  // };
-  // add your user config here
+  config.secret_keys = {
+    usersecret: 'usersecret'
+  };
   const userConfig = {
     // myAppName: 'egg',
   };

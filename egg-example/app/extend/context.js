@@ -51,19 +51,6 @@ const extendCtx = {
         }
         this.logger.info(`SuccessBody:${JSON.stringify(body)}`);
         this.body = body
-    },
-    /**
-     * 参数验证
-     * @param { Object } rules 参数验证规则
-     * @param { Object } data request中的body对象
-     * @return { Object } error 验证失败的结果
-     */
-    validate(rules, data) {
-        data = data || this.request.body;
-        const errors = this.app.validator.validate(rules, data);
-        if (errors) {
-            this.throw(new SystemError({code:ERR_CODE['INVALID_PARAM_ERR'], message:`参数验证失败:${errors[0].field} ${errors[0].message}`}));
-        }
-    },
+    }
 };
 module.exports = extendCtx;

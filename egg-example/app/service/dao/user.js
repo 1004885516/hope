@@ -12,21 +12,28 @@ class user extends Service {
     }
     async addOne(query) {
         const { ctx, model } = this;
-        ctx.logger.info('dao/user:addOne  doc', JSON.stringify(query));
+        ctx.logger.info('dao/user:addOne  query', JSON.stringify(query));
         const doc = query.doc;
         return await model.User.create(doc);
     }
     async getOne(query) {
         const { ctx, model } = this;
-        ctx.logger.info('dao/user:getOne  doc', JSON.stringify(query));
+        ctx.logger.info('dao/user: getOne  query', JSON.stringify(query));
         return await model.User
             .findOne(query.find)
             .select(query.select || {})
             .exec();
     }
+    async upDateOne(query) {
+        const { ctx, model } = this;
+        ctx.logger.info('dao/user: upDateOne query', JSON.stringify(query));
+        return await model.User
+            .update(query.find, query.update)
+            .exec()
+    }
     async getList(query) {
         const { ctx, model } = this;
-        ctx.logger.info('dao/user:getList  doc', JSON.stringify(query));
+        ctx.logger.info('dao/user: getList query', JSON.stringify(query));
         return await model.User
             .find(query.find)
             .select(query.select || {})
@@ -36,11 +43,19 @@ class user extends Service {
             .exec();
     }
     async getCount(query) {
-        const { model } = this;
+        const { ctx, model } = this;
+        ctx.logger.info('dao/user: getCount query', JSON.stringify(query));
         return await model.User
             .find(query.find)
             .count()
             .exec();
+    }
+    async deleteOne(query) {
+        const { ctx, model } = this;
+        ctx.logger.info('dao/user: deleteOne query', JSON.stringify(query))
+        return await model.User
+            .remove(query.find)
+            .exec()
     }
 }
 

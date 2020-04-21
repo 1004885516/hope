@@ -1,23 +1,49 @@
 'use strict'
 const Joi = require('@hapi/joi');
 /**
- * 用户信息相关参数验证规则
- * 可扩展其他类型的验证规则，在下面定义模版即可
+ * user相关参数验证规则,如下只是初步定义，后续可扩展
  */
-const userBodySchema = Joi.object({
-    action: Joi.string()
-        .required(),
+const createUserSchema = Joi.object({
     login: Joi.string()
         .alphanum()  // 字母数字
         .min(6)
-        .max(12),
+        .max(12)
+        .required(),
     password: Joi.string()
         .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
     name: Joi.string(),
+})
+const loginSchema = Joi.object({
+    login: Joi.string().required(),
+    password: Joi.string().required()
+})
+const userUpdateSchema = Joi.object({
+    login: Joi.string()
+        .required(),
+    action: Joi.string(),
+    name: Joi.string(),
+})
+const deleteUserSchema = Joi.object({
+    _id: Joi.string()
+        .required(),
+    action: Joi.string(),
+})
+const getOneUserSchema = Joi.object({
+    login: Joi.string()
+        .required(),
+    action: Joi.string()
+})
+const getListUser = Joi.object({
+    action: Joi.string(),
+    select: Joi.object(),
     page: Joi.number(),
     limit: Joi.number(),
 })
-
 module.exports = {
-    userBodySchema
+    createUserSchema,
+    loginSchema,
+    userUpdateSchema,
+    deleteUserSchema,
+    getOneUserSchema,
+    getListUser
 }
