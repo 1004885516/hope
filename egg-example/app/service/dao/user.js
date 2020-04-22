@@ -47,7 +47,7 @@ class user extends Service {
         ctx.logger.info('dao/user: getCount query', JSON.stringify(query));
         return await model.User
             .find(query.find)
-            .count()
+            .countDocuments()
             .exec();
     }
     async deleteOne(query) {
