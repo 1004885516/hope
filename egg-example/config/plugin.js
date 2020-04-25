@@ -1,5 +1,6 @@
 'use strict';
 
+
 /** @type Egg.EggPlugin */
 // 这地方一个大坑，module.exports导致下面的配置不生效
 // module.exports = {

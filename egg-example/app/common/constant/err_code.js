@@ -1,4 +1,6 @@
 'use strict';
+
+
 const ERR_CODE = {
     'SUCCESS': 'SUCCESS', // 处理成功
     'INVALID_PARAM_ERR': 'INVALID_PARAM_ERR', // 参数错误

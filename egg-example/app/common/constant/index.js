@@ -1,4 +1,6 @@
 'use strict';
-exports.ERR_CODE = require('./errcode');
+
+
+exports.ERR_CODE = require('./err_code');
 exports.RES_BODY = require('./response');
-exports.GLOBAL_FIELD = require('./globalfield');
+exports.PROJECT_FIELD = require('./project_field');

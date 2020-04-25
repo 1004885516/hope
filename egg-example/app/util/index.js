@@ -1,3 +1,4 @@
 'use strict'
 
-exports.CreateToken = require('./createTokenUser');
+
+exports.CreateToken = require('./create_token_user');

@@ -17,9 +17,11 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = ['errorHandler'];
+  
   config.logger = {
     appLogName: `${appInfo.name}-web.log`,
   };
+
   config.mongoose = {
     // url: 'mongodb://47.92.118.197:27017/subject',
     url: 'mongodb://127.0.0.1:27017/DB01',
@@ -29,16 +31,19 @@ module.exports = appInfo => {
       bufferMaxEntries: 0,
     },
   };
+
   config.cors = {
     origin:'*',
     allowMethods:'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH'
   };
+
   // 跨域白名单
   config.security = {
     csrf:{
       enable: false,
     }
   };
+
   // 允许任何IP访问
   config.cluster = {
     listen: {
@@ -46,13 +51,16 @@ module.exports = appInfo => {
       port: 7001,
     }
   };
+
   // 为每一次请求添加tracerId，方便追踪接口问题
   config.tracer = {
-    Class: require('../app/common/my_tracer')
+    Class: require('../app/common/tracer')
   };
+
   config.secret_keys = {
     usersecret: 'usersecret'
   };
+
   const userConfig = {
     // myAppName: 'egg',
   };

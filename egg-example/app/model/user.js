@@ -1,9 +1,11 @@
 'use strict';
 
+
 /*
     用户信息
  */
 module.exports = app => {
+    
     const mongoose = app.mongoose;
 
     const userSchema = new mongoose.Schema({

@@ -1,4 +1,6 @@
 'use strict';
+
+
 const SystemError = require('../error');
 
 exports.isSystemError = function (err) {

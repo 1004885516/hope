@@ -1,4 +1,6 @@
 'use strict';
+
+
 const RES_BODY = {
     SUCCESS: {
         code: 200,
@@ -25,6 +27,7 @@ const RES_BODY = {
         msg: '无token或token失效'
     }
 };
+
 module.exports = {
     RES_BODY
 };
