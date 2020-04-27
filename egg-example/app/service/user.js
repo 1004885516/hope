@@ -104,7 +104,7 @@ class UserService extends Service {
             }
         };
 
-        const result = dao.user.upDateOne(query);
+        const result = await dao.user.upDateOne(query);
 
         return result;
     }
