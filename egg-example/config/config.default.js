@@ -37,7 +37,7 @@ module.exports = appInfo => {
     allowMethods:'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH'
   };
 
-  // 跨域白名单
+  // 解除安全验证，保证post请求对接口可以正常访问
   config.security = {
     csrf:{
       enable: false,
