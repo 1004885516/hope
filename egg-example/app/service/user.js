@@ -76,7 +76,7 @@ class UserService extends Service {
         if(!user){
 
             errorObj = { code: ERR_CODE.NO_DATA_ERR, message: "未找到该用户" };
-            errorBody = new SystemError(errorBody);
+            errorBody = new SystemError(errorObj);
 
             if (!errorBody) {
                 errorBody = { code: SERVER_ERR, message: 'error构建失败'};
