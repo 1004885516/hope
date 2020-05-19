@@ -8,7 +8,7 @@ const { SystemError, Constant } = Common;
 const { ERR_CODE } = Constant.ERR_CODE;
 const { PROJECT_FIELD } = Constant.PROJECT_FIELD;
 const { LIMIT, PAGE } = PROJECT_FIELD.DB_PARAMS;
-const { CreateToken } = require('../util')
+const { CreateToken, EncryptionPwd } = require('../util')
 
 
 class UserService extends Service {
@@ -45,10 +45,11 @@ class UserService extends Service {
 
         }
 
+        const pwd = EncryptionPwd.encryptPassword(login, password)
         const query = {
             doc: {
                 login: login,
-                password: password,
+                password: pwd,
                 name: name
             }
         };
@@ -75,7 +76,7 @@ class UserService extends Service {
 
         if(!user){
 
-            errorObj = { code: ERR_CODE.NO_DATA_ERR, message: "未找到该用户" };
+            errorObj = { code: ERR_CODE.NO_DATA_ERR, message: '未找到该用户' };
             errorBody = new SystemError(errorObj);
 
             if (!errorBody) {
@@ -83,6 +84,20 @@ class UserService extends Service {
             }
 
             ctx.throw(errorBody);
+        }
+
+        const pwd = EncryptionPwd.validatePassword(login, password, user.password)
+
+        if(!pwd){
+
+            errorObj = { code: ERR_CODE.INVALID_PARAM_ERR, message: '密码错误' }
+            errorBody = new SystemError(errorObj)
+
+            if(!errorBody){
+                errorBody = { code: SERVER_ERR, message: 'error构建失败'};
+            }
+
+            ctx.throw(errorBody)
         }
 
         const token = CreateToken.createTokenUser(user)
