@@ -33,8 +33,10 @@ module.exports = appInfo => {
   };
 
   config.cors = {
-    origin:'*',
-    allowMethods:'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH'
+    origin:'http://localhost:8000',  // vue axios发送请求携带cookie时，此处不允许为通配符 *
+    // origin:'*',
+    allowMethods:'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH',
+    credentials: true // 允许客户端发送cookie
   };
 
   // 解除安全验证，保证post请求对接口可以正常访问
@@ -57,9 +59,19 @@ module.exports = appInfo => {
     Class: require('../app/common/tracer')
   };
 
+  // 用于生成token
   config.secret_keys = {
     usersecret: 'usersecret'
   };
+
+  // session基础配置
+  config.session = {
+    key: 'session_key',
+    maxAge: 24 * 3600 * 1000, // 1天
+    httpOnly: true,
+    encrypt: true,
+    renew: true, // 每次访问都会给session延长时间
+  }
 
   const userConfig = {
     // myAppName: 'egg',

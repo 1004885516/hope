@@ -100,6 +100,7 @@ class UserService extends Service {
             ctx.throw(errorBody)
         }
 
+        ctx.session.user = user // 将用户信息好存到session中，session信息框架加密后会存储到cookie
         const token = CreateToken.createTokenUser(user)
 
         return token;
@@ -144,7 +145,7 @@ class UserService extends Service {
 
         const { ctx, dao } = this;
         const { login } = reqBody;
-
+        
         ctx.logger.info(`getOneUser login:${ login }`);
 
         const query = {

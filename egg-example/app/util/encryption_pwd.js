@@ -1,7 +1,10 @@
 'use strict'
 
+
 const SHA256 = require('crypto-js/sha256')
 const SHA3 = require('crypto-js/sha3')
+
+// 密码加密
 
 function encryptPassword (login, password){
 
@@ -15,12 +18,19 @@ function encryptPassword (login, password){
     return encryptPwd
 
 }
+
+// 验证密码有效性
+
 function validatePassword (login, pwd, userpwd){
 
     if(userpwd === this.encryptPassword(login, pwd)){
+        
         return true;
+
     }else{
+
         return false;
+
     }
 
 }
