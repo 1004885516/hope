@@ -7,7 +7,7 @@ const Joi = require('@hapi/joi');
  * user相关参数验证规则,如下只是初步定义，后续可扩展
  */
 const createUserSchema = Joi.object({
-    login: Joi.string()
+    username: Joi.string()
         .alphanum()  // 字母数字
         .min(6)
         .max(12)
@@ -18,12 +18,12 @@ const createUserSchema = Joi.object({
 })
 
 const loginSchema = Joi.object({
-    login: Joi.string().required(),
+    username: Joi.string().required(),
     password: Joi.string().required()
 })
 
 const userUpdateSchema = Joi.object({
-    login: Joi.string()
+    username: Joi.string()
         .required(),
     action: Joi.string(),
     name: Joi.string(),
@@ -36,8 +36,7 @@ const deleteUserSchema = Joi.object({
 })
 
 const getOneUserSchema = Joi.object({
-    login: Joi.string()
-        .required(),
+    username: Joi.string(),
     action: Joi.string()
 })
 

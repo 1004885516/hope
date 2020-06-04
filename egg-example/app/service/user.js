@@ -24,13 +24,13 @@ class UserService extends Service {
     async createUser(reqBody) {
 
         const { ctx, dao } = this;
-        const { login, password, name } = reqBody;
+        const { username, password, name } = reqBody;
         let errorObj = null;
         let errorBody = null;
 
-        ctx.logger.info(`createUser login:${ login } password:${ password } name:${name}`);
+        ctx.logger.info(`createUser username:${ username } password:${ password } name:${name}`);
 
-        const user = await dao.user.getOne({ find: { login: login } })
+        const user = await dao.user.getOne({ find: { username: username } })
 
         if(user){
 
@@ -45,10 +45,10 @@ class UserService extends Service {
 
         }
 
-        const pwd = EncryptionPwd.encryptPassword(login, password)
+        const pwd = EncryptionPwd.encryptPassword(username, password)
         const query = {
             doc: {
-                login: login,
+                username: username,
                 password: pwd,
                 name: name
             }
@@ -62,14 +62,14 @@ class UserService extends Service {
     async userLogin(reqBody){
 
         const { ctx, dao } = this;
-        const { login, password } = reqBody;
+        const { username, password } = reqBody;
         let errorObj = null;
         let errorBody = null;
 
-        ctx.logger.info(`userLogin login: ${ login } password: ${ password }`)
+        ctx.logger.info(`userLogin username: ${ username } password: ${ password }`)
 
         const query = {
-            find:{ login: login}
+            find:{ username: username}
         }
 
         const user = await dao.user.getOne(query);
@@ -86,7 +86,7 @@ class UserService extends Service {
             ctx.throw(errorBody);
         }
 
-        const pwd = EncryptionPwd.validatePassword(login, password, user.password)
+        const pwd = EncryptionPwd.validatePassword(username, password, user.password)
 
         if(!pwd){
 
@@ -100,7 +100,6 @@ class UserService extends Service {
             ctx.throw(errorBody)
         }
 
-        ctx.session.user = user // 将用户信息好存到session中，session信息框架加密后会存储到cookie
         const token = CreateToken.createTokenUser(user)
 
         return token;
@@ -109,12 +108,12 @@ class UserService extends Service {
     async userUpdate(reqBody){
 
         const { ctx, dao } = this;
-        const { login, name } = reqBody;
+        const { username, name } = reqBody;
 
-        ctx.logger.info(`userUpdate login ${ login } name: ${ name }`)
+        ctx.logger.info(`userUpdate username ${ username } name: ${ name }`)
 
         const query = {
-            find:{ login: login },
+            find:{ username: username },
             update:{
                 $set: { name: name }
             }
@@ -144,14 +143,15 @@ class UserService extends Service {
     async getOneUser(reqBody) {
 
         const { ctx, dao } = this;
-        const { login } = reqBody;
+        const { username } = reqBody;
         
-        ctx.logger.info(`getOneUser login:${ login }`);
-
+        ctx.logger.info(`getOneUser username:${ username }`);
+        
         const query = {
             find: {
-                login: login
-            }
+                username: username ? username : ctx.user.username
+            },
+            select:{ '__v':0, password:0, createTime:0 }
         };
 
         const result = await dao.user.getOne(query);

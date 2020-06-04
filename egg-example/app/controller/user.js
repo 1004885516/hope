@@ -80,7 +80,7 @@ class UserController extends Controller {
 
         const action = reqBody.action;
         let user = null;
-
+        console.log('reqBody', reqBody)
         switch (action) {
             case USER_UPDATE:    // 更新用户信息
                 await userUpdateSchema.validateAsync(reqBody);
