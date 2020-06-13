@@ -17,7 +17,7 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = ['errorHandler'];
-  
+
   config.logger = {
     appLogName: `${appInfo.name}-web.log`,
   };
@@ -29,19 +29,20 @@ module.exports = appInfo => {
       autoReconnect: true,
       reconnectTries: Number.MAX_VALUE,
       bufferMaxEntries: 0,
+      useUnifiedTopology: true
     },
   };
 
   config.cors = {
-    origin:'http://localhost:9527',  // vue axios发送请求携带cookie时，此处不允许为通配符 *
+    origin: 'http://localhost:9527',  // vue axios发送请求携带cookie时，此处不允许为通配符 *
     // origin:'*',
-    allowMethods:'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH',
+    allowMethods: 'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH',
     credentials: true // 允许客户端发送cookie
   };
 
   // 解除安全验证，保证post请求对接口可以正常访问
   config.security = {
-    csrf:{
+    csrf: {
       enable: false,
     }
   };
@@ -72,6 +73,12 @@ module.exports = appInfo => {
     encrypt: true,
     renew: true, // 每次访问都会给session延长时间
   }
+
+  // multipart 扩展白名单配置支持.epub文件
+  config.multipart = {
+    mode: 'stream',
+    fileExtensions: ['.epub']
+  };
 
   const userConfig = {
     // myAppName: 'egg',

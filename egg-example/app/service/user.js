@@ -13,177 +13,177 @@ const { CreateToken, EncryptionPwd } = require('../util')
 
 class UserService extends Service {
 
-    constructor(ctx){
+  constructor(ctx) {
 
-        super(ctx);
+    super(ctx);
 
-        this.dao = ctx.service.dao;
+    this.dao = ctx.service.dao;
+
+  }
+
+  async createUser (reqBody) {
+
+    const { ctx, dao } = this;
+    const { username, password, name } = reqBody;
+    let errorObj = null;
+    let errorBody = null;
+
+    ctx.logger.info(`createUser username:${username} password:${password} name:${name}`);
+
+    const user = await dao.user.getOne({ find: { username: username } })
+
+    if (user) {
+
+      errorObj = { code: ERR_CODE.REPEAT_ACTION_ERR, message: '该用户已注册' };
+      errorBody = new SystemError(errorObj);
+
+      if (!errorBody) {
+        errorBody = { code: ERR_CODE.SERVER_ERR, message: 'error构建失败' };
+      }
+
+      ctx.throw(errorBody);
 
     }
 
-    async createUser(reqBody) {
+    const pwd = EncryptionPwd.encryptPassword(username, password)
+    const query = {
+      doc: {
+        username: username,
+        password: pwd,
+        name: name
+      }
+    };
 
-        const { ctx, dao } = this;
-        const { username, password, name } = reqBody;
-        let errorObj = null;
-        let errorBody = null;
+    const result = await dao.user.addOne(query);
 
-        ctx.logger.info(`createUser username:${ username } password:${ password } name:${name}`);
+    return result;
+  }
 
-        const user = await dao.user.getOne({ find: { username: username } })
+  async userLogin (reqBody) {
 
-        if(user){
+    const { ctx, dao } = this;
+    const { username, password } = reqBody;
+    let errorObj = null;
+    let errorBody = null;
 
-            errorObj = { code: ERR_CODE.REPEAT_ACTION_ERR, message: '该用户已注册' };
-            errorBody = new SystemError(errorObj);
+    ctx.logger.info(`userLogin username: ${username} password: ${password}`)
 
-            if (!errorBody) {
-                errorBody = { code: SERVER_ERR, message: 'error构建失败'};
-            }
-
-            ctx.throw(errorBody);
-
-        }
-
-        const pwd = EncryptionPwd.encryptPassword(username, password)
-        const query = {
-            doc: {
-                username: username,
-                password: pwd,
-                name: name
-            }
-        };
-
-        const result = await dao.user.addOne(query);
-
-        return result;
+    const query = {
+      find: { username: username }
     }
 
-    async userLogin(reqBody){
+    const user = await dao.user.getOne(query);
 
-        const { ctx, dao } = this;
-        const { username, password } = reqBody;
-        let errorObj = null;
-        let errorBody = null;
+    if (!user) {
 
-        ctx.logger.info(`userLogin username: ${ username } password: ${ password }`)
+      errorObj = { code: ERR_CODE.NO_DATA_ERR, message: '未找到该用户' };
+      errorBody = new SystemError(errorObj);
 
-        const query = {
-            find:{ username: username}
-        }
+      if (!errorBody) {
+        errorBody = { code: ERR_CODE.SERVER_ERR, message: 'error构建失败' };
+      }
 
-        const user = await dao.user.getOne(query);
-
-        if(!user){
-
-            errorObj = { code: ERR_CODE.NO_DATA_ERR, message: '未找到该用户' };
-            errorBody = new SystemError(errorObj);
-
-            if (!errorBody) {
-                errorBody = { code: SERVER_ERR, message: 'error构建失败'};
-            }
-
-            ctx.throw(errorBody);
-        }
-
-        const pwd = EncryptionPwd.validatePassword(username, password, user.password)
-
-        if(!pwd){
-
-            errorObj = { code: ERR_CODE.INVALID_PARAM_ERR, message: '密码错误' }
-            errorBody = new SystemError(errorObj)
-
-            if(!errorBody){
-                errorBody = { code: SERVER_ERR, message: 'error构建失败'};
-            }
-
-            ctx.throw(errorBody)
-        }
-
-        const token = CreateToken.createTokenUser(user)
-
-        return token;
+      ctx.throw(errorBody);
     }
 
-    async userUpdate(reqBody){
+    const pwd = EncryptionPwd.validatePassword(username, password, user.password)
 
-        const { ctx, dao } = this;
-        const { username, name } = reqBody;
+    if (!pwd) {
 
-        ctx.logger.info(`userUpdate username ${ username } name: ${ name }`)
+      errorObj = { code: ERR_CODE.INVALID_PARAM_ERR, message: '密码错误' }
+      errorBody = new SystemError(errorObj)
 
-        const query = {
-            find:{ username: username },
-            update:{
-                $set: { name: name }
-            }
-        };
+      if (!errorBody) {
+        errorBody = { code: ERR_CODE.SERVER_ERR, message: 'error构建失败' };
+      }
 
-        const result = await dao.user.upDateOne(query);
-
-        return result;
+      ctx.throw(errorBody)
     }
 
-    async userDelete(reqBody){
+    const token = CreateToken.createTokenUser(user)
 
-        const { ctx, dao } = this;
-        const { _id } = reqBody;
+    return token;
+  }
 
-        ctx.logger.info(`userDelete _id ${ _id }`)
+  async userUpdate (reqBody) {
 
-        const query = {
-            find: { _id: _id }
-        };
+    const { ctx, dao } = this;
+    const { username, name } = reqBody;
 
-        const result = await dao.user.deleteOne(query);
-        
-        return result;
-    }
+    ctx.logger.info(`userUpdate username ${username} name: ${name}`)
 
-    async getOneUser(reqBody) {
+    const query = {
+      find: { username: username },
+      update: {
+        $set: { name: name }
+      }
+    };
 
-        const { ctx, dao } = this;
-        const { username } = reqBody;
-        
-        ctx.logger.info(`getOneUser username:${ username }`);
-        
-        const query = {
-            find: {
-                username: username ? username : ctx.user.username
-            },
-            select:{ '__v':0, password:0, createTime:0 }
-        };
+    const result = await dao.user.upDateOne(query);
 
-        const result = await dao.user.getOne(query);
+    return result;
+  }
 
-        return result;
-    }
+  async userDelete (reqBody) {
 
-    async getUserList(reqBody) {
+    const { ctx, dao } = this;
+    const { _id } = reqBody;
 
-        const { ctx, dao } = this;
-        const $limit = reqBody.limit ? reqBody.limit : LIMIT;
-        const page = reqBody.page ? reqBody.page : PAGE;
+    ctx.logger.info(`userDelete _id ${_id}`)
 
-        ctx.logger.info(`getUserList:`);
+    const query = {
+      find: { _id: _id }
+    };
 
-        const query = {
-            find: {},
-            select:{ '__v':0 },
-            $limit: $limit,
-            $skip: (page - 1) * $limit
-        };
+    const result = await dao.user.deleteOne(query);
 
-        const count = await dao.user.getCount(query);
+    return result;
+  }
 
-        const totalPage = Math.ceil(count / $limit);
+  async getOneUser (reqBody) {
 
-        const users = await dao.user.getList(query);
+    const { ctx, dao } = this;
+    const { username } = reqBody;
 
-        const result = { total: count, totalPage: totalPage, item: users }
+    ctx.logger.info(`getOneUser username:${username}`);
 
-        return result;
-    }
+    const query = {
+      find: {
+        username: username ? username : ctx.user.username
+      },
+      select: { '__v': 0, password: 0, createTime: 0 }
+    };
+
+    const result = await dao.user.getOne(query);
+
+    return result;
+  }
+
+  async getUserList (reqBody) {
+
+    const { ctx, dao } = this;
+    const $limit = reqBody.limit ? reqBody.limit : LIMIT;
+    const page = reqBody.page ? reqBody.page : PAGE;
+
+    ctx.logger.info(`getUserList:`);
+
+    const query = {
+      find: {},
+      select: { '__v': 0 },
+      $limit: $limit,
+      $skip: (page - 1) * $limit
+    };
+
+    const count = await dao.user.getCount(query);
+
+    const totalPage = Math.ceil(count / $limit);
+
+    const users = await dao.user.getList(query);
+
+    const result = { total: count, totalPage: totalPage, item: users }
+
+    return result;
+  }
 
 }
 
