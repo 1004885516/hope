@@ -39,30 +39,34 @@ class BookService extends Service {
 
       } else {
 
-        let result;
+        const target = path.join(UPLOAD_PATH, `/book/${part.filename}`) // 目标路径
 
-        try {
+        // 此处封装promise为了保证写入流必须先执行成功，然后才能保证后面解析时能读到epub文件，
+        // 否则调用book.paras时会报错找不到文件（这个问题很经典，很关键，很考验对异步的理解）
 
-          const target = path.join(UPLOAD_PATH, `/book${part.filename}`) // 目标路径
+        await new Promise((resolve, reject) => {
+
           const writeStream = fs.createWriteStream(target);
+          part.pipe(writeStream);
 
-          await part.pipe(writeStream)
+          let errFlag;
 
-        } catch (err) {
+          writeStream.on('error', err => {
 
-          // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
-          await sendToWormhole(part);
+            errFlag = true;
+            sendToWormhole(part); // 执行失败，将上传的文件流消费掉
+            reject(err);
 
-          const errorObj = { code: ERR_CODE.UPLOAD_ERR, message: '上传失败' };
-          let errorBody = new SystemError(errorObj);
+          })
 
-          if (!errorBody) {
-            errorBody = { code: ERR_CODE.SERVER_ERR, message: 'error构建失败' };
-          }
+          writeStream.on('finish', () => {
+            if (errFlag) return
 
-          ctx.throw(errorBody);
+            resolve('写入成功')
+          })
 
-        }
+        })
+
       }
 
       const book = new Book(part);

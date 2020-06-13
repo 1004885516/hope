@@ -25,8 +25,7 @@ class Book {
   createBookFromFile (file) {
     console.log('file', file)
     const { filename, mimeType, _readableState } = file;
-    const filePath = _readableState.pipes.path.replace(/\\/g, "/")
-    // const filePath = path.join(UPLOAD_PATH, filename);
+    const filePath = path.join(UPLOAD_PATH, `/book/${filename}`).replace(/\\/g, "/");
 
     this.filename = filename.split('.')[0];
     this.mimeType = mimeType;
@@ -54,14 +53,12 @@ class Book {
       ctx.throw(errorBody);
     }
 
-    console.log('bookpath222', bookPath)
-
-    const epub = new EPub('D:/nginx/nginxServer/static/book/国家宝藏.epub')
+    const epub = new EPub(bookPath)
 
     epub.on('error', err => {
 
       if (err) {
-        console.log('err####', err)
+
         const errorObj = { code: ERR_CODE.PARSE_ERR, message: '电子书解析失败' };
         let errorBody = new SystemError(errorObj);
 
@@ -70,16 +67,19 @@ class Book {
         }
 
         ctx.throw(errorBody);
+
       }
 
     })
 
     epub.on('end', err => {
+
       if (err) {
         ctx.throw(err)
       } else {
         console.log('metadata', epub.metadata)
       }
+
     })
 
     epub.parse();
