@@ -10,7 +10,6 @@ try {
   var AdmZip = require('adm-zip');
 
   var ZipFile = function (filename) {
-    console.log('filename', filename)
     this.admZip = new AdmZip(filename);
     this.names = this.admZip.getEntries().map(function (zipEntry) {
       return zipEntry.entryName;
@@ -106,7 +105,6 @@ class EPub extends EventEmitter {
       this.emit("error", new Error("Invalid/missing file"));
       return;
     }
-    console.log('this.zip', this.zip)
     if (!this.zip.names || !this.zip.names.length) {
       this.emit("error", new Error("No files in archive"));
       return;
@@ -747,14 +745,20 @@ class EPub extends EventEmitter {
    **/
   getImage (id, callback) {
     if (this.manifest[id]) {
-
       if ((this.manifest[id]['media-type'] || "").toLowerCase().trim().substr(0, 6) != "image/") {
         return callback(new Error("Invalid mime type for image"));
       }
 
       this.getFile(id, callback);
     } else {
-      callback(new Error("File not found"));
+      const coverId = Object.keys(this.manifest).find(key => {
+        this.manifest[key].properties === 'cover-image'
+      })
+      if (coverId) {
+        this.getFile(coverId, callback)
+      } else {
+        callback(new Error("File not found"));
+      }
     }
   };
 

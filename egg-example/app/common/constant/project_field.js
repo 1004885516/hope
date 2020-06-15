@@ -3,7 +3,7 @@
 
 const { env } = require('./env')
 const upload_path = env === 'env' ? 'D:/nginx/nginxServer/static' : 'root/upload/book';
-const upload_url = env === 'env' ? 'http://127.0.0.1:8089/book' : ''
+const upload_url = env === 'env' ? 'http://127.0.0.1:8089' : ''
 
 exports.PROJECT_FIELD = {
 
@@ -21,5 +21,8 @@ exports.PROJECT_FIELD = {
   PATH: {
     UPLOAD_PATH: upload_path,
     UPLOAD_URL: upload_url
+  },
+  BOOK: {
+    MIME_TYPE_EPUB: 'application/epub+zip'
   }
 };

@@ -68,13 +68,10 @@ class BookService extends Service {
         })
 
       }
-
       const book = new Book(part);
       await book.paras(ctx)
       console.log('book', book)
-
     }
-
   }
 
 }
