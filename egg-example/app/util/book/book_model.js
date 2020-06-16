@@ -25,8 +25,6 @@ class Book {
 
   createBookFromFile (file) {
 
-    console.log('file', file)
-
     const { filename, mimeType, _readableState } = file;;
     const newfilename = filename.split('.')[0];
     const filePath = path.join(UPLOAD_PATH, `/book/${filename}`).replace(/\\/g, "/");
@@ -39,7 +37,7 @@ class Book {
       fs.mkdirSync(unzipPath, { recursive: true }) // 创建电子书解压后的目录
     }
 
-    this.filename = newfilename;
+    this.fileName = newfilename;
     this.path = `/book/${filename}`
     this.mimeType = mimeType;
     this.filePath = filePath;
@@ -48,6 +46,7 @@ class Book {
     this.author = '' // 作者
     this.publisher = '' // 出版社
     this.contents = [] // 目录
+    this.contentsTree = [] // 目录树
     this.cover = '' // 封面图片URL
     this.coverPath = '' // 封面图片路径
     this.category = -1 // 分类ID
@@ -65,7 +64,7 @@ class Book {
   async paras (ctx) {
 
     const bookPath = this.filePath;
-    // console.log('bookPath', bookPath)
+
     if (!fs.existsSync(bookPath)) {
 
       const errorObj = { code: ERR_CODE.UPLOAD_ERR, message: '电子书不存在' };
@@ -88,7 +87,7 @@ class Book {
 
       })
 
-      epub.on('end', err => {
+      epub.on('end', async err => {
 
         if (err) {
           reject(err)
@@ -102,7 +101,6 @@ class Book {
             cover,
             publisher
           } = epub.metadata
-
           if (!title) {
 
             const errorObj = { code: ERR_CODE.PARSE_ERR, message: '图书标题为空' };
@@ -126,17 +124,19 @@ class Book {
 
               this.unzip(this.path)
 
-              this.parseContents(ctx, epub)
+              const { chapters, chaptersTree } = await this.parseContents(ctx, epub)
+              this.contents = chapters;
+              this.contentsTree = chaptersTree;
 
               const handleGetImage = (err, file, mimeType) => {
                 if (err) {
                   reject(err)
                 } else {
                   const suffix = mimeType.split('/')[1];
-                  const coverPath = `${UPLOAD_PATH}/img/${this.filename}.${suffix}`; // 封面图片路径
-                  const coverUrl = `${UPLOAD_URL}/img/${this.filename}.${suffix}`;   // 封面图片url
+                  const coverPath = `${UPLOAD_PATH}/img/${this.fileName}.${suffix}`; // 封面图片路径
+                  const coverUrl = `${UPLOAD_URL}/img/${this.fileName}.${suffix}`;   // 封面图片url
                   fs.writeFileSync(coverPath, file, 'binary')
-                  this.coverPath = `/img/${this.filename}.${suffix}`
+                  this.coverPath = `/img/${this.fileName}.${suffix}`
                   this.cover = coverUrl
                   resolve()
                 }
@@ -165,7 +165,7 @@ class Book {
 
   }
 
-  parseContents (ctx, epub) {
+  async parseContents (ctx, epub) {
 
     // 获取电子书中的ncx文件路径
     function getNcxFilePath () {
@@ -182,42 +182,64 @@ class Book {
 
     // 为目录每一级添加level和pid属性,处理成树状结构
     function findParent (arr, level = 0, pid = '') {
+
       return arr.map(item => {
+
         item.level = level;
         item.pid = pid;
+
         if (item.navPoint && item.navPoint.length > 0) {
-          item.navPoint = findParent(item.navPoint, level + 1, pid = item.$.id)
+
+          item.navPoint = findParent(item.navPoint, level + 1, item.$.id) // 此处要特别注意，参数赋值 item.$.id如果为 pid = item.$.id 会覆盖findParent的默认值，导致后面一系列的树状结构处理出大问题
+
         } else if (item.navPoint) {
+
           item.navPoint.level = level + 1;
           item.navPoint.pid = item.$.id
+
         }
+
         return item
       })
+
     }
 
     // 多维数组扁平化
     function flatten (arr) {
+
       return [].concat(...arr.map(item => {
+
         if (item.navPoint && item.navPoint.length > 0) {
+
           return [].concat(item, ...flatten(item.navPoint))
+
         } else if (item.navPoint) {
+
           return [].concat(item, item.navPoint)
+
         }
+
         return item
+
       }))
+
     }
 
     const ncxFilePath = Book.genPath(`${this.unzipPath}/${getNcxFilePath()}`)
-    const fileName = this.filename;
+    const fileName = this.fileName;
+
     if (fs.existsSync(ncxFilePath)) {
 
       // 解析xml书籍目录
       return new Promise((resolve, reject) => {
 
         const xml = fs.readFileSync(ncxFilePath, 'utf-8');
+
         parseString(xml, {
+
           explicitArray: false,
           ignoreAttrs: false
+
         }, function (err, json) {
           if (err) {
             reject(err)
@@ -226,10 +248,14 @@ class Book {
             const navMap = json.ncx.navMap;
             if (navMap.navPoint && navMap.navPoint.length > 0) {
 
+              // 调用处理树状结构函数，返回包含level和pid属性的新数组，pid用来在前端展示树状层级
               navMap.navPoint = findParent(navMap.navPoint);
-              // console.log('navMap.navPoint', navMap.navPoint)
+
+              // 多维数组扁平化处理
               const newNavMap = flatten(navMap.navPoint);
               const chapters = [];
+              console.log('epub.flow#####', epub.flow)
+
               epub.flow.forEach((chapter, index) => {
 
                 if (index + 1 > newNavMap.length) {
@@ -240,20 +266,52 @@ class Book {
                 chapter.text = `${UPLOAD_URL}/unzip/${fileName}/${chapter.href}`;
 
                 if (nav && nav.navLabel) {
+
                   chapter.label = nav.navLabel.text || '';
+
                 } else {
+
                   chapter.label = '';
+
                 }
 
                 chapter.level = nav.level;
                 chapter.pid = nav.pid;
-                chapter.navid = nav['$'].id;
+                chapter.navId = nav['$'].id;
                 chapter.filename = fileName;
                 chapter.order = index + 1;
                 chapters.push(chapter)
 
               });
-              console.log('chapters', chapters)
+
+              const chaptersTree = [];
+
+              chapters.forEach(item => {
+
+                if (!item.pid) {
+
+                  chaptersTree.push(item);
+
+                } else {
+
+                  const parent = chapters.find(item2 => {
+                    return item.pid === item2.navId
+                  })
+
+                  if (!parent.children) {
+
+                    parent.children = [item]
+
+                  } else {
+
+                    parent.children.push(item)
+
+                  }
+
+                }
+              })
+
+              resolve({ chapters, chaptersTree })
             } else {
 
               reject(new Error('解析失败，电子书目录为空'))

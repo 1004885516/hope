@@ -26,9 +26,9 @@ class BookController extends Controller {
 
     const parts = ctx.multipart();
 
-    await service.book.uploadBook(parts);
+    const result = await service.book.uploadBook(parts);
 
-    ctx.setSuccessBody(null, '上传成功');
+    ctx.setSuccessBody(result, '上传成功');
   }
 }
 
