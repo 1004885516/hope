@@ -254,30 +254,13 @@ class Book {
               // 多维数组扁平化处理
               const newNavMap = flatten(navMap.navPoint);
               const chapters = [];
-              console.log('epub.flow#####', epub.flow)
-
-              epub.flow.forEach((chapter, index) => {
-
-                if (index + 1 > newNavMap.length) {
-                  return
-                }
-
-                const nav = newNavMap[index];
-                chapter.text = `${UPLOAD_URL}/unzip/${fileName}/${chapter.href}`;
-
-                if (nav && nav.navLabel) {
-
-                  chapter.label = nav.navLabel.text || '';
-
-                } else {
-
-                  chapter.label = '';
-
-                }
-
-                chapter.level = nav.level;
-                chapter.pid = nav.pid;
-                chapter.navId = nav['$'].id;
+              newNavMap.forEach((chapter, index) => {
+                const src = chapter.content['$'].src;
+                const dir = path.dirname(ncxFilePath).replace(UPLOAD_PATH, '')
+                chapter.text = `${UPLOAD_URL}${dir}/${src}`;
+                chapter.label = chapter.navLabel.text || '';
+                chapter.pid = chapter.pid;
+                chapter.navId = chapter['$'].id;
                 chapter.filename = fileName;
                 chapter.order = index + 1;
                 chapters.push(chapter)
