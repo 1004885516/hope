@@ -35,7 +35,9 @@ class book extends Service {
     }
 
     Object.keys(doc).forEach(key => {
+
       // 此处判断book对象中的每一个值都必须有Book类构造 
+
       if (!doc.hasOwnProperty(key)) {
 
         ctx.throw(new Error('数据库写入失败，不合法的值'));
