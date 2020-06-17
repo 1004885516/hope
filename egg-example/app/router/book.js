@@ -10,4 +10,5 @@ module.exports = app => {
   const verifyUser = getValidator('verifyUser');
 
   router.post('/book/upload', verifyUser, book.upload);
+  router.post('/book/api', verifyUser, book.bookHandler)
 }

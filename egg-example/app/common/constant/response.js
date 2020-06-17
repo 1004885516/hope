@@ -33,6 +33,10 @@ const RES_BODY = {
   PARSE_ERR: {
     code: 100,
     msg: '文件解析失败'
+  },
+  DATA_TYPE_ERR: {
+    code: 101,
+    msg: '数据类型错误'
   }
 };
 

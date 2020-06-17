@@ -7,6 +7,15 @@ const { SystemError, Constant } = common;
 const { ERR_CODE } = Constant.ERR_CODE;
 const { PROJECT_FIELD } = Constant.PROJECT_FIELD;
 
+const {
+  BOOK_CREATE,
+  BOOK_UPDATE
+} = PROJECT_FIELD.ACTION;
+
+const {
+  createBookSchema,
+  updateBookSchema
+} = common.Validator.BOOK_SCHEMA
 
 
 class BookController extends Controller {
@@ -30,6 +39,41 @@ class BookController extends Controller {
 
     ctx.setSuccessBody(result, '上传成功');
   }
+
+  async bookHandler () {
+
+    const { ctx, service, reqBody } = this;
+
+    ctx.logger.info('controller/bookHandler, reqBody', JSON.stringify(reqBody))
+
+    const action = reqBody.action
+    let book;
+
+    switch (action) {
+      case BOOK_CREATE:
+        await createBookSchema.validateAsync(reqBody);
+        book = await service.book.createBook(reqBody);
+        break;
+      case BOOK_UPDATE:
+        await updateBookSchema.validateAsync(reqBody);
+        await service.book.updateBook(reqBody);
+        break;
+      default:
+        throw new SystemError({ code: ERR_CODE.INVALID_PARAM_ERR, message: 'no such action' })
+    }
+
+    if (book) {
+
+      ctx.setSuccessBody(book)
+
+    } else {
+
+      ctx.setSuccessBody()
+
+    }
+
+  }
+
 }
 
 module.exports = BookController;

@@ -11,6 +11,7 @@ const ERR_CODE = {
   'TOKEN_ERR': 'TOKEN_ERR',                     // token 异常
   'UPLOAD_ERR': 'UPLOAD_ERR',                   // 文件上传失败
   'PARSE_ERR': 'PARSE_ERR',                     // 解析失败
+  'DATA_TYPE_ERR': 'DATA_TYPE_ERR'              // 数据类型错误
 };
 
 module.exports = {

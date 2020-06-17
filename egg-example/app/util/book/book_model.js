@@ -23,12 +23,12 @@ class Book {
 
   }
 
+  // 根据上传电子书信息，初始化book对象
   createBookFromFile (file) {
 
     const { filename, mimeType, _readableState } = file;;
     const newfilename = filename.split('.')[0];
     const filePath = path.join(UPLOAD_PATH, `/book/${filename}`).replace(/\\/g, "/");
-    // const suffix = mimeType === MIME_TYPE_EPUB ? '.epub' : '';
     const url = `${UPLOAD_URL}/book/${filename}`;
     const unzipPath = `${UPLOAD_PATH}/unzip/${newfilename}`;
     const unzipUrl = `${UPLOAD_URL}/unzip/${newfilename}`;
@@ -54,11 +54,24 @@ class Book {
     this.language = '' // 语种
     this.unzipPath = `/unzip/${newfilename}` // 解压后的电子书目录
     this.unzipUrl = unzipUrl // 解压后的电子书链接
-    this.originalName = file.originalname
+    this.originalName = filename //电子书原始文件名
   }
-
+  // 根据表单提交信息，填充book对象，用于存入数据库
   createBookFromData (data) {
-
+    this.fileName = data.fileName
+    this.url = data.url
+    this.path = data.path
+    this.cover = data.cover
+    this.title = data.title
+    this.author = data.author
+    this.publisher = data.publisher
+    this.language = data.language
+    this.rootFile = data.rootFile
+    this.originalName = data.originalName
+    this.filePath = data.path || data.filePath
+    this.unzipPath = data.unzipPath
+    this.coverPath = data.coverPath
+    this.createUser = data.user
   }
 
   async paras (ctx) {
@@ -121,7 +134,7 @@ class Book {
             this.rootFile = epub.rootFile
 
             try {
-
+              // 解压文件
               this.unzip(this.path)
 
               const { chapters, chaptersTree } = await this.parseContents(ctx, epub)
@@ -320,7 +333,6 @@ class Book {
   }
 
   static genPath (path) {
-
     // 检查字符串是否以/开头
     if (!path.startsWith('/')) {
       path = `/${path}`

@@ -76,6 +76,44 @@ class BookService extends Service {
     }
   }
 
+  async createBook (reqBody) {
+
+    const { ctx, dao } = this;
+    let errorObj = null;
+    let errorBody = null;
+
+    const book = await dao.book.getOne({ find: { title: reqBody.title } })
+
+    if (book) {
+
+      errorObj = { code: ERR_CODE.REPEAT_ACTION_ERR, message: '该书籍已添加，不可重复操作' };
+      errorBody = new SystemError(errorObj);
+
+      if (!errorBody) {
+        errorBody = { code: ERR_CODE.SERVER_ERR, message: 'error构建失败' };
+      }
+
+      ctx.throw(errorBody);
+    }
+
+    // 为reqBody对象添加user信息
+    reqBody.user = {
+      username: ctx.user.name,
+      user_id: ctx.user._id,
+      roles: ctx.user.roles
+    }
+
+    // 创建book对象
+    const bookObj = new Book(null, reqBody);
+
+    const result = await dao.book.addOne({ doc: bookObj });
+
+    return result;
+  }
+
+  async updateBook (reqBody) {
+
+  }
 }
 
 module.exports = BookService
