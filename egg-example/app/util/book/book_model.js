@@ -26,7 +26,7 @@ class Book {
   // 根据上传电子书信息，初始化book对象
   createBookFromFile (file) {
 
-    const { filename, mimeType, _readableState } = file;;
+    const { filename, mimeType } = file;;
     const newfilename = filename.split('.')[0];
     const filePath = path.join(UPLOAD_PATH, `/book/${filename}`).replace(/\\/g, "/");
     const url = `${UPLOAD_URL}/book/${filename}`;
@@ -75,6 +75,7 @@ class Book {
     this.contents = data.contents
   }
 
+  // 解析电子书主逻辑
   async paras (ctx) {
 
     const bookPath = this.filePath;
@@ -170,6 +171,7 @@ class Book {
     })
   }
 
+  // 解压电子书
   unzip () {
 
     const zip = new AdmZip(Book.genPath(this.path));
@@ -178,7 +180,6 @@ class Book {
     zip.extractAllTo(Book.genPath(this.unzipPath), true)
 
   }
-
 
   // 解析电子书目录
   async parseContents (ctx, epub) {
@@ -336,8 +337,58 @@ class Book {
     }
   }
 
-  // 处理路径，避免误传
+  // 获取目录对象
+  async getContents () {
+    return this.contents
+  }
+
+  // 删除文件
+  async reset () {
+
+    if (Book.pathExists(this.filePath)) {
+
+      fs.unlinkSync(Book.genPath(this.filePath))
+
+    }
+
+    if (Book.pathExists(this.coverPath)) {
+
+      fs.unlinkSync(Book.genPath(this.coverPath))
+
+    }
+
+    if (Book.pathExists(this.unzipPath)) {
+
+      // fs.rmdirSync() 方法迭代删除文件夹下文件 recursive属性 低版本node或许不支持 (亲测9.3.0版本会报错)
+      fs.rmdirSync(Book.genPath(this.unzipPath), { recursive: true })
+
+    }
+
+  }
+
+  // class 中的 static 静态方法只能被子类继承，而不能被new的实例继承
+  // 非静态方法中访问静态方法最好通过类名调用： Book.pathExists 或者 this.constrcutor.pathExists
+
+  // 判断路径是否存在
+  static pathExists (path) {
+
+    // 刚学到的 startsWith() 方法用来判断字符串是否以给定字符串开头
+    if (path.startsWith(UPLOAD_PATH)) {
+
+      // fs.existsSync 验证路径是否存在返回 true/false
+      return fs.existsSync(path)
+
+    } else {
+
+      return fs.existsSync(Book.genPath(path))
+
+    }
+
+  }
+
+  // 路径兼容，避免误传，和补全完整的上传路径 比如电子书的解压路径，在book对象构建时就不是全路径，只有/unzip后面的部分
   static genPath (path) {
+
     // 检查字符串是否以/开头
     if (!path.startsWith('/')) {
       path = `/${path}`
@@ -345,11 +396,6 @@ class Book {
 
     return `${UPLOAD_PATH}${path}`
 
-  }
-
-  // 获取目录对象
-  async getContents () {
-    return this.contents
   }
 }
 

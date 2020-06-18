@@ -81,12 +81,22 @@ class BookService extends Service {
   async createBook (reqBody) {
 
     const { ctx, dao } = this;
+    // 创建book对象
+    const book = new Book(null, reqBody);
     let errorObj = null;
     let errorBody = null;
+    const query = {
+      title: reqBody.title,
+      author: reqBody.author,
+      publisher: reqBody.publisher
+    }
 
-    const bookData = await dao.book.getOne({ find: { title: reqBody.title } });
+    const bookData = await dao.book.getOne({ find: query });
 
     if (bookData) {
+
+      // 如果电子书的书名，作者，出版社都相同，认为这本书存在，因此要移除资源服务器中本次上传的文件
+      await book.reset()
 
       errorObj = { code: ERR_CODE.REPEAT_ACTION_ERR, message: '该书籍已添加，不可重复操作' };
       errorBody = new SystemError(errorObj);
@@ -105,9 +115,6 @@ class BookService extends Service {
       user_id: user_id,
       roles: ctx.user.roles
     }
-
-    // 创建book对象
-    const book = new Book(null, reqBody);
 
     // 写入书籍
     const result = await dao.book.addOneBook({ doc: book });
