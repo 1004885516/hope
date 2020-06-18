@@ -72,6 +72,7 @@ class Book {
     this.unzipPath = data.unzipPath
     this.coverPath = data.coverPath
     this.createUser = data.user
+    this.contents = data.contents
   }
 
   async paras (ctx) {
@@ -178,6 +179,8 @@ class Book {
 
   }
 
+
+  // 解析电子书目录
   async parseContents (ctx, epub) {
 
     // 获取电子书中的ncx文件路径
@@ -270,6 +273,7 @@ class Book {
               newNavMap.forEach((chapter, index) => {
                 const src = chapter.content['$'].src;
                 const dir = path.dirname(ncxFilePath).replace(UPLOAD_PATH, '')
+                chapter.href = `${dir}/${src}`
                 chapter.text = `${UPLOAD_URL}${dir}/${src}`;
                 chapter.label = chapter.navLabel.text || '';
                 chapter.pid = chapter.pid;
@@ -332,6 +336,7 @@ class Book {
     }
   }
 
+  // 处理路径，避免误传
   static genPath (path) {
     // 检查字符串是否以/开头
     if (!path.startsWith('/')) {
@@ -342,6 +347,10 @@ class Book {
 
   }
 
+  // 获取目录对象
+  async getContents () {
+    return this.contents
+  }
 }
 
 module.exports = Book;

@@ -21,7 +21,8 @@ const createBookSchema = Joi.object({
   coverPath: Joi.string().required(),
   filePath: Joi.string().required(),
   unzipPath: Joi.string().required(),
-  path: Joi.string().required()
+  path: Joi.string().required(),
+  contents: Joi.array().required()
 })
 
 const updateBookSchema = Joi.object({

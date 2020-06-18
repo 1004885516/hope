@@ -6,8 +6,6 @@
 
 const Service = require('egg').Service;
 const Common = require('../../common');
-const { SystemError, Constant } = Common;
-const { ERR_CODE } = Constant.ERR_CODE;
 const { DATA_TYPE } = Common.Validator;
 
 class book extends Service {
@@ -20,11 +18,12 @@ class book extends Service {
 
   }
 
-  async addOne (query) {
+  // 书籍相关操作
+  async addOneBook (query) {
 
     const { ctx, model } = this;
 
-    ctx.logger.info('dao/book:addOne  query', JSON.stringify(query));
+    ctx.logger.info('dao/book:addOneBook  query', JSON.stringify(query));
 
     const doc = query.doc;
 
@@ -112,6 +111,25 @@ class book extends Service {
       .exec()
   }
 
+  // 目录相关
+  async addOneCatalogue (query) {
+
+    const { ctx, model } = this;
+
+    ctx.logger.info('dao/book:addOneCatalogue  query', JSON.stringify(query));
+
+    const doc = query.doc;
+
+    if (!DATA_TYPE.isObject(doc)) {
+
+      ctx.throw(new Error('数据库写入失败，doc is not a object'));
+
+    }
+
+    const result = await model.Catalogue.create(doc);
+
+    return result;
+  }
 }
 
 

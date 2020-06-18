@@ -27,6 +27,8 @@ class BookController extends Controller {
     this.reqBody = ctx.request.body;
 
   }
+
+  // 上传文件
   async upload () {
 
     const { ctx, service, reqBody } = this;
@@ -40,6 +42,7 @@ class BookController extends Controller {
     ctx.setSuccessBody(result, '上传成功');
   }
 
+  // 电子书操作
   async bookHandler () {
 
     const { ctx, service, reqBody } = this;
@@ -52,7 +55,7 @@ class BookController extends Controller {
     switch (action) {
       case BOOK_CREATE:
         await createBookSchema.validateAsync(reqBody);
-        book = await service.book.createBook(reqBody);
+        await service.book.createBook(reqBody);
         break;
       case BOOK_UPDATE:
         await updateBookSchema.validateAsync(reqBody);

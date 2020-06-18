@@ -12,7 +12,7 @@ module.exports = app => {
     title: { type: String, required: true, unique: true },        // 书名
     author: { type: String },                                     // 作者
     publisher: { type: String },                                  // 出版社
-    language: { type: String },                                    // 语种
+    language: { type: String },                                   // 语种
     rootFile: { type: String },                                   // 根文件(电子书的核心内容文件)
     cover: { type: String },                                      // 封面图片URL(nginx图片访问地址)
     coverPath: { type: String },                                  // 封面图片路径(nginx静态资源路径)

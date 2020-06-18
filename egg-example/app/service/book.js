@@ -2,7 +2,7 @@
 
 
 const Service = require('egg').Service;
-const _ = require('underscore');
+const _ = require('lodash');
 const Common = require('../common');
 const { SystemError, Constant } = Common;
 const { ERR_CODE } = Constant.ERR_CODE;
@@ -23,6 +23,7 @@ class BookService extends Service {
 
   }
 
+  // 写入文件流并解析资源文件
   async uploadBook (parts) {
 
     const { ctx } = this;
@@ -76,15 +77,16 @@ class BookService extends Service {
     }
   }
 
+  // 创建书籍和目录相关
   async createBook (reqBody) {
 
     const { ctx, dao } = this;
     let errorObj = null;
     let errorBody = null;
 
-    const book = await dao.book.getOne({ find: { title: reqBody.title } })
+    const bookData = await dao.book.getOne({ find: { title: reqBody.title } });
 
-    if (book) {
+    if (bookData) {
 
       errorObj = { code: ERR_CODE.REPEAT_ACTION_ERR, message: '该书籍已添加，不可重复操作' };
       errorBody = new SystemError(errorObj);
@@ -97,18 +99,32 @@ class BookService extends Service {
     }
 
     // 为reqBody对象添加user信息
+    const user_id = ctx.user._id.toString();
     reqBody.user = {
       username: ctx.user.name,
-      user_id: ctx.user._id,
+      user_id: user_id,
       roles: ctx.user.roles
     }
 
     // 创建book对象
-    const bookObj = new Book(null, reqBody);
+    const book = new Book(null, reqBody);
 
-    const result = await dao.book.addOne({ doc: bookObj });
+    // 写入书籍
+    const result = await dao.book.addOneBook({ doc: book });
 
-    return result;
+    // 写入书籍目录
+    const contents = await book.getContents();
+    const book_id = result._id.toString();
+    const select = ['filename', 'navId', 'label', 'href', 'pid', 'order', 'level'];
+
+    contents.forEach(async (item) => {
+
+      let catalogue = _.pick(item, select);
+      catalogue.book_id = book_id;
+
+      await this.service.dao.book.addOneCatalogue({ doc: catalogue })
+
+    });
   }
 
   async updateBook (reqBody) {
