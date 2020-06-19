@@ -81,6 +81,9 @@ class BookService extends Service {
   async createBook (reqBody) {
 
     const { ctx, dao } = this;
+
+    ctx.logger.info(`createBook title:${reqBody.title}`);
+
     // 创建book对象
     const book = new Book(null, reqBody);
     let errorObj = null;
@@ -91,7 +94,7 @@ class BookService extends Service {
       publisher: reqBody.publisher
     }
 
-    const bookData = await dao.book.getOne({ find: query });
+    const bookData = await dao.book.getOneBook({ find: query });
 
     if (bookData) {
 
@@ -122,7 +125,7 @@ class BookService extends Service {
     // 写入书籍目录
     const contents = await book.getContents();
     const book_id = result._id.toString();
-    const select = ['filename', 'navId', 'label', 'href', 'pid', 'order', 'level'];
+    const select = ['fileName', 'navId', 'label', 'href', 'pid', 'order', 'level', 'text'];
 
     contents.forEach(async (item) => {
 
@@ -134,8 +137,67 @@ class BookService extends Service {
     });
   }
 
+  // 获取图书
+  async getOneBook (reqBody) {
+
+    const { ctx, dao } = this;
+    const { fileName } = reqBody;
+
+    ctx.logger.info(`getOneBook fileName:${reqBody.fileName}`);
+
+    // 获取书籍信息
+    const book = await dao.book.getOneBook({ find: { fileName: fileName } });
+
+    // 获取目录信息
+    const query = {
+      find: { fileName: fileName },
+      sort: { order: 1 }
+    }
+
+    const catalogue = await dao.book.getCatalogueList(query)
+
+    // const result = Object.assign({}, book);
+
+    book.contentsTree = Book.getContentsTree(catalogue);
+
+    return book;
+  }
+
   async updateBook (reqBody) {
 
+    const { ctx, dao } = this;
+
+    ctx.logger.info(`createBook title:${reqBody.title}`);
+
+    const { fileName } = reqBody;
+    let errorObj = null;
+    let errorBody = null;
+
+    // 查询电子书
+    const bookData = await dao.book.getOneBook({ find: { fileName: fileName } });
+
+    if (!bookData) {
+
+      errorObj = { code: ERR_CODE.NO_DATA_ERR, message: '该书籍不存在' };
+      errorBody = new SystemError(errorObj);
+
+      if (!errorBody) {
+        errorBody = { code: ERR_CODE.SERVER_ERR, message: 'error构建失败' };
+      }
+
+      ctx.throw(errorBody);
+    }
+
+    // 更新电子书
+    const update = {
+      $set: {
+        title: reqBody.title,
+        author: reqBody.author,
+        publisher: reqBody.publisher,
+        language: reqBody.language
+      }
+    };
+    await dao.book.updateOneBook({ find: { fileName: fileName }, update: update });
   }
 }
 

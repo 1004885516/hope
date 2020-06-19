@@ -9,12 +9,13 @@ const { PROJECT_FIELD } = Constant.PROJECT_FIELD;
 
 const {
   BOOK_CREATE,
-  BOOK_UPDATE
+  GET_ONE_BOOK,
+  UPDATE_ONE_BOOK
 } = PROJECT_FIELD.ACTION;
 
 const {
-  createBookSchema,
-  updateBookSchema
+  bookSchema,
+  getOneBookSchema,
 } = common.Validator.BOOK_SCHEMA
 
 
@@ -54,11 +55,15 @@ class BookController extends Controller {
 
     switch (action) {
       case BOOK_CREATE:
-        await createBookSchema.validateAsync(reqBody);
+        await bookSchema.validateAsync(reqBody);
         await service.book.createBook(reqBody);
         break;
-      case BOOK_UPDATE:
-        await updateBookSchema.validateAsync(reqBody);
+      case GET_ONE_BOOK:
+        await getOneBookSchema.validateAsync(reqBody);
+        book = await service.book.getOneBook(reqBody);
+        break;
+      case UPDATE_ONE_BOOK:
+        await bookSchema.validateAsync(reqBody);
         await service.book.updateBook(reqBody);
         break;
       default:

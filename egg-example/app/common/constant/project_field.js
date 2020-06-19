@@ -13,7 +13,8 @@ exports.PROJECT_FIELD = {
     GET_ONE_USER: 'get_one_user',
     GET_USER_LIST: 'get_user_list',
     BOOK_CREATE: 'create_book',
-    BOOK_UPDATE: 'update_book'
+    GET_ONE_BOOK: 'get_one_book',
+    UPDATE_ONE_BOOK: 'update_one_book'
   },
 
   DB_PARAMS: {

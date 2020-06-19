@@ -2,12 +2,13 @@
 
 
 const Joi = require('@hapi/joi');
+const { join } = require('lodash');
 
 /**
  * book相关参数验证规则
  */
 
-const createBookSchema = Joi.object({
+const bookSchema = Joi.object({
   action: Joi.string().required(),
   title: Joi.string().required(),
   author: Joi.string().required(),
@@ -22,14 +23,16 @@ const createBookSchema = Joi.object({
   filePath: Joi.string().required(),
   unzipPath: Joi.string().required(),
   path: Joi.string().required(),
-  contents: Joi.array().required()
+  contents: Joi.array()
 })
 
-const updateBookSchema = Joi.object({
 
+const getOneBookSchema = Joi.object({
+  action: Joi.string().required(),
+  fileName: Joi.string().required()
 })
 
 module.exports = {
-  createBookSchema,
-  updateBookSchema
+  bookSchema,
+  getOneBookSchema
 }

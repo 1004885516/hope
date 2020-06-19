@@ -139,9 +139,9 @@ class Book {
               // 解压文件
               this.unzip(this.path)
 
-              const { chapters, chaptersTree } = await this.parseContents(ctx, epub)
+              const { chapters, contentsTree } = await this.parseContents(ctx, epub)
               this.contents = chapters;
-              this.contentsTree = chaptersTree;
+              this.contentsTree = contentsTree;
 
               const handleGetImage = (err, file, mimeType) => {
                 if (err) {
@@ -279,40 +279,15 @@ class Book {
                 chapter.label = chapter.navLabel.text || '';
                 chapter.pid = chapter.pid;
                 chapter.navId = chapter['$'].id;
-                chapter.filename = fileName;
+                chapter.fileName = fileName;
                 chapter.order = index + 1;
                 chapters.push(chapter)
 
               });
 
-              const chaptersTree = [];
+              const contentsTree = Book.getContentsTree(chapters);
 
-              chapters.forEach(item => {
-
-                if (!item.pid) {
-
-                  chaptersTree.push(item);
-
-                } else {
-
-                  const parent = chapters.find(item2 => {
-                    return item.pid === item2.navId
-                  })
-
-                  if (!parent.children) {
-
-                    parent.children = [item]
-
-                  } else {
-
-                    parent.children.push(item)
-
-                  }
-
-                }
-              })
-
-              resolve({ chapters, chaptersTree })
+              resolve({ chapters, contentsTree })
             } else {
 
               reject(new Error('解析失败，电子书目录为空'))
@@ -396,6 +371,38 @@ class Book {
 
     return `${UPLOAD_PATH}${path}`
 
+  }
+
+  // 处理电子书目录树状结构
+  static getContentsTree (contents) {
+
+    const contentsTree = [];
+
+    contents.forEach(item => {
+
+      if (!item.pid) {
+
+        contentsTree.push(item);
+
+      } else {
+
+        const parent = contents.find(item2 => {
+          return item.pid === item2.navId
+        })
+
+        if (!parent.children) {
+
+          parent.children = [item];
+
+        } else {
+
+          parent.children.push(item);
+
+        }
+
+      }
+    })
+    return contentsTree
   }
 }
 

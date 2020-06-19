@@ -50,23 +50,24 @@ class book extends Service {
     return result;
   }
 
-  async getOne (query) {
+  async getOneBook (query) {
 
     const { ctx, model } = this;
 
-    ctx.logger.info('dao/book: getOne  query', JSON.stringify(query));
+    ctx.logger.info('dao/book: getOneBook  query', JSON.stringify(query));
 
     return await model.Book
       .findOne(query.find)
       .select(query.select || {})
+      .lean()
       .exec();
   }
 
-  async updateOne (query) {
+  async updateOneBook (query) {
 
     const { ctx, model } = this;
 
-    ctx.logger.info('dao/book: upDateOne query', JSON.stringify(query));
+    ctx.logger.info('dao/book: updateOneBook query', JSON.stringify(query));
 
     return await model.Book
       .update(query.find, query.update)
@@ -130,6 +131,24 @@ class book extends Service {
 
     return result;
   }
+
+  // 获取书籍列表
+  async getCatalogueList (query) {
+
+    const { ctx, model } = this;
+
+    ctx.logger.info('dao/book:getCatalogueList  query', JSON.stringify(query));
+    console.log('query', query)
+    return await model.Catalogue
+      .find(query.find)
+      .select(query.select || {})
+      .sort(query.sort || {})
+      .skip(query.$skip)
+      .limit(query.$limit)
+      .lean()    // 查询到的结果为javascript对象，从而可进行操作，否则不能修改
+      .exec();
+  }
+
 }
 
 
