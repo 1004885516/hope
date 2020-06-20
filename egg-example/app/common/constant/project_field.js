@@ -14,12 +14,13 @@ exports.PROJECT_FIELD = {
     GET_USER_LIST: 'get_user_list',
     BOOK_CREATE: 'create_book',
     GET_ONE_BOOK: 'get_one_book',
-    UPDATE_ONE_BOOK: 'update_one_book'
+    UPDATE_ONE_BOOK: 'update_one_book',
+    GET_LIST_BOOK: 'get_list_book'
   },
 
-  DB_PARAMS: {
-    LIMIT: 10,
-    PAGE: 1
+  PUBLIC_PARAMS: {
+    PAGES: 1,
+    PAGE_SIZE: 10
   },
   PATH: {
     UPLOAD_PATH: upload_path,

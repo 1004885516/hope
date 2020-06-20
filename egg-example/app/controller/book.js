@@ -10,12 +10,14 @@ const { PROJECT_FIELD } = Constant.PROJECT_FIELD;
 const {
   BOOK_CREATE,
   GET_ONE_BOOK,
-  UPDATE_ONE_BOOK
+  UPDATE_ONE_BOOK,
+  GET_LIST_BOOK
 } = PROJECT_FIELD.ACTION;
 
 const {
   bookSchema,
   getOneBookSchema,
+  getBookListSchema
 } = common.Validator.BOOK_SCHEMA
 
 
@@ -65,6 +67,10 @@ class BookController extends Controller {
       case UPDATE_ONE_BOOK:
         await bookSchema.validateAsync(reqBody);
         await service.book.updateBook(reqBody);
+        break;
+      case GET_LIST_BOOK:
+        await getBookListSchema.validateAsync(reqBody);
+        book = await service.book.getBookList(reqBody);
         break;
       default:
         throw new SystemError({ code: ERR_CODE.INVALID_PARAM_ERR, message: 'no such action' })

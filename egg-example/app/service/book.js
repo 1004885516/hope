@@ -7,7 +7,7 @@ const Common = require('../common');
 const { SystemError, Constant } = Common;
 const { ERR_CODE } = Constant.ERR_CODE;
 const { PROJECT_FIELD } = Constant.PROJECT_FIELD;
-const { LIMIT, PAGE } = PROJECT_FIELD.DB_PARAMS;
+const { PAGES, PAGE_SIZE } = PROJECT_FIELD.PUBLIC_PARAMS;
 const { UPLOAD_PATH } = PROJECT_FIELD.PATH;
 const path = require('path');
 const fs = require('fs');
@@ -111,9 +111,9 @@ class BookService extends Service {
       ctx.throw(errorBody);
     }
 
-    // 为reqBody对象添加user信息
+    // 为book对象添加user信息
     const user_id = ctx.user._id.toString();
-    reqBody.user = {
+    book.createUser = {
       username: ctx.user.name,
       user_id: user_id,
       roles: ctx.user.roles
@@ -137,7 +137,7 @@ class BookService extends Service {
     });
   }
 
-  // 获取图书
+  // 获取一条书籍信息
   async getOneBook (reqBody) {
 
     const { ctx, dao } = this;
@@ -163,6 +163,7 @@ class BookService extends Service {
     return book;
   }
 
+  // 更新书籍
   async updateBook (reqBody) {
 
     const { ctx, dao } = this;
@@ -198,6 +199,42 @@ class BookService extends Service {
       }
     };
     await dao.book.updateOneBook({ find: { fileName: fileName }, update: update });
+  }
+
+  // 获取书籍列表
+  async getBookList (reqBody) {
+    const { ctx, dao } = this;
+
+    ctx.logger.info(`getBookList title:${reqBody}`);
+
+    console.log('reqBody', reqBody)
+    const { title, author, category, pages, pageSize } = reqBody;
+    const find = {};
+    if (title) {
+      find.title = { $regex: title };
+    }
+    if (author) {
+      find.author = { $regex: author };
+    }
+    if (category) {
+      find.category = category;
+    }
+
+    const _pages = pages || PAGES;
+    const _pageSize = pageSize || PAGE_SIZE;
+    const query = {
+      find: find,
+      select: { '__v': 0 },
+      $limit: _pageSize,
+      $skip: (_pages - 1) * _pageSize
+    };
+
+    const bookList = await dao.book.getBookList(query);
+    const bookCount = await dao.book.getBookCount({ find: find });
+    const totalPage = Math.ceil(bookCount / _pageSize);
+    const result = { total: bookCount, totalPage: totalPage, bookList: bookList };
+
+    return result;
   }
 }
 

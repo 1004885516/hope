@@ -18,7 +18,10 @@ class book extends Service {
 
   }
 
-  // 书籍相关操作
+  /**
+   * 书籍相关操作
+   */
+
   async addOneBook (query) {
 
     const { ctx, model } = this;
@@ -74,11 +77,11 @@ class book extends Service {
       .exec()
   }
 
-  async getList (query) {
+  async getBookList (query) {
 
     const { ctx, model } = this;
 
-    ctx.logger.info('dao/book: getList query', JSON.stringify(query));
+    ctx.logger.info('dao/book: getBookList query', JSON.stringify(query));
 
     return await model.Book
       .find(query.find)
@@ -89,11 +92,11 @@ class book extends Service {
       .exec();
   }
 
-  async getCount (query) {
+  async getBookCount (query) {
 
     const { ctx, model } = this;
 
-    ctx.logger.info('dao/book: getCount query', JSON.stringify(query));
+    ctx.logger.info('dao/book: getBookCount query', JSON.stringify(query));
 
     return await model.Book
       .find(query.find)
@@ -112,7 +115,10 @@ class book extends Service {
       .exec()
   }
 
-  // 目录相关
+
+  /**
+   * 目录相关
+   */
   async addOneCatalogue (query) {
 
     const { ctx, model } = this;

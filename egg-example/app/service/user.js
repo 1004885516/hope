@@ -7,7 +7,7 @@ const Common = require('../common');
 const { SystemError, Constant } = Common;
 const { ERR_CODE } = Constant.ERR_CODE;
 const { PROJECT_FIELD } = Constant.PROJECT_FIELD;
-const { LIMIT, PAGE } = PROJECT_FIELD.DB_PARAMS;
+const { PAGES, PAGE_SIZE } = PROJECT_FIELD.PUBLIC_PARAMS;
 const { CreateToken, EncryptionPwd } = require('../util')
 
 
@@ -162,8 +162,8 @@ class UserService extends Service {
   async getUserList (reqBody) {
 
     const { ctx, dao } = this;
-    const $limit = reqBody.limit ? reqBody.limit : LIMIT;
-    const page = reqBody.page ? reqBody.page : PAGE;
+    const $limit = reqBody.limit ? reqBody.limit : PAGE_SIZE;
+    const page = reqBody.page ? reqBody.page : PAGES;
 
     ctx.logger.info(`getUserList:`);
 

@@ -22,7 +22,11 @@ module.exports = app => {
     filePath: { type: String },                                   // 上传epub文件所在nginx目录(完整路径)
     unzipPath: { type: String },                                  // 文件解压路径(nginx)
     originalName: { type: String },                               // 原始文件名
-    createUser: { type: Object },                                 // 创建人
+    createUser: {
+      username: { type: String, required: true },                 // 创建人名字
+      user_id: { type: String, required: true },                  // 创建人id
+      roles: { type: Array, required: true }                      // 创建人权限
+    },
     updateTime: { type: Date },                                   // 更新时间
     createTime: { type: Date, default: Date.now }                 // 创建时间
   });

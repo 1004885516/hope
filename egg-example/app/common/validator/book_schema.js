@@ -32,7 +32,16 @@ const getOneBookSchema = Joi.object({
   fileName: Joi.string().required()
 })
 
+
+const getBookListSchema = Joi.object({
+  action: Joi.string().required(),
+  title: Joi.string().allow(''),
+  author: Joi.string().allow(''),
+  pages: Joi.number().required(),
+  pageSize: Joi.number().required()
+})
 module.exports = {
   bookSchema,
-  getOneBookSchema
+  getOneBookSchema,
+  getBookListSchema
 }
