@@ -15,7 +15,8 @@ exports.PROJECT_FIELD = {
     BOOK_CREATE: 'create_book',
     GET_ONE_BOOK: 'get_one_book',
     UPDATE_ONE_BOOK: 'update_one_book',
-    GET_LIST_BOOK: 'get_list_book'
+    GET_LIST_BOOK: 'get_list_book',
+    DELETE_ONE_BOOK: 'delete_one_book'
   },
 
   PUBLIC_PARAMS: {

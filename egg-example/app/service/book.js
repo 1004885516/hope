@@ -4,6 +4,7 @@
 const Service = require('egg').Service;
 const _ = require('lodash');
 const Common = require('../common');
+const util = require('../util')
 const { SystemError, Constant } = Common;
 const { ERR_CODE } = Constant.ERR_CODE;
 const { PROJECT_FIELD } = Constant.PROJECT_FIELD;
@@ -156,8 +157,6 @@ class BookService extends Service {
 
     const catalogue = await dao.book.getCatalogueList(query)
 
-    // const result = Object.assign({}, book);
-
     book.contentsTree = Book.getContentsTree(catalogue);
 
     return book;
@@ -207,7 +206,6 @@ class BookService extends Service {
 
     ctx.logger.info(`getBookList title:${reqBody}`);
 
-    console.log('reqBody', reqBody)
     const { title, author, category, pages, pageSize } = reqBody;
     const find = {};
     if (title) {
@@ -230,11 +228,49 @@ class BookService extends Service {
     };
 
     const bookList = await dao.book.getBookList(query);
+    bookList.forEach(item => {
+      item.createTime = util.Formit.dateFormat(item.createTime, "yyyy-MM-dd hh:mm:ss")
+    })
     const bookCount = await dao.book.getBookCount({ find: find });
     const totalPage = Math.ceil(bookCount / _pageSize);
     const result = { total: bookCount, totalPage: totalPage, bookList: bookList };
 
     return result;
+  }
+
+  // 删除一本电子书
+  async deleteOneBook (reqBody) {
+
+    const { ctx, dao } = this;
+    const { fileName } = reqBody;
+    ctx.logger.info(`deleteOneBook fileName:${reqBody.fileName}`);
+
+    // 获取电子书信息
+    const bookData = await this.getOneBook(reqBody);
+
+    if (!bookData) {
+
+      errorObj = { code: ERR_CODE.NO_DATA_ERR, message: '该电子书不存在' };
+      errorBody = new SystemError(errorObj);
+
+      if (!errorBody) {
+        errorBody = { code: ERR_CODE.SERVER_ERR, message: 'error构建失败' };
+      }
+
+      ctx.throw(errorBody);
+    }
+
+    // 删除书籍相关信息
+    await dao.book.deleteOneBook({ find: { fileName: fileName } });
+
+    // 删除书籍目录相关信息
+    const book_id = bookData._id.toString();
+    await dao.book.deleteCatalogue({ find: { book_id: book_id } });
+
+    // 删除nginx资源文件
+    const book = new Book(null, bookData);
+    await book.reset();
+
   }
 }
 

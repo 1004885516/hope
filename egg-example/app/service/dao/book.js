@@ -89,6 +89,7 @@ class book extends Service {
       .sort(query.sort || {})
       .skip(query.$skip)
       .limit(query.$limit)
+      .lean()
       .exec();
   }
 
@@ -104,11 +105,11 @@ class book extends Service {
       .exec();
   }
 
-  async deleteOne (query) {
+  async deleteOneBook (query) {
 
     const { ctx, model } = this;
 
-    ctx.logger.info('dao/book: deleteOne query', JSON.stringify(query));
+    ctx.logger.info('dao/book: deleteOneBook query', JSON.stringify(query));
 
     return await model.Book
       .remove(query.find)
@@ -153,6 +154,18 @@ class book extends Service {
       .limit(query.$limit)
       .lean()    // 查询到的结果为javascript对象，从而可进行操作，否则不能修改
       .exec();
+  }
+
+  // 删除目录
+  async deleteCatalogue (query) {
+
+    const { ctx, model } = this;
+
+    ctx.logger.info('dao/book: deleteCatalogue query', JSON.stringify(query));
+
+    return await model.Catalogue
+      .remove(query.find)
+      .exec()
   }
 
 }

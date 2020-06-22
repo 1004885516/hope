@@ -11,7 +11,8 @@ const {
   BOOK_CREATE,
   GET_ONE_BOOK,
   UPDATE_ONE_BOOK,
-  GET_LIST_BOOK
+  GET_LIST_BOOK,
+  DELETE_ONE_BOOK
 } = PROJECT_FIELD.ACTION;
 
 const {
@@ -71,6 +72,10 @@ class BookController extends Controller {
       case GET_LIST_BOOK:
         await getBookListSchema.validateAsync(reqBody);
         book = await service.book.getBookList(reqBody);
+        break;
+      case DELETE_ONE_BOOK:
+        await getOneBookSchema.validateAsync(reqBody);
+        await service.book.deleteOneBook(reqBody);
         break;
       default:
         throw new SystemError({ code: ERR_CODE.INVALID_PARAM_ERR, message: 'no such action' })
