@@ -24,8 +24,8 @@ module.exports = appInfo => {
   };
 
   config.cors = {
-    origin: 'http://60.205.191.215:9527',  // vue axios发送请求携带cookie时，此处不允许为通配符 *
-    // origin:'*',
+    // origin: 'http://60.205.191.215:9527',  // vue axios发送请求携带cookie时，此处不允许为通配符 *
+    origin: '*',
     allowMethods: 'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH',
     credentials: true // 允许客户端发送cookie
   };
