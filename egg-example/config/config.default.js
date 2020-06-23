@@ -50,7 +50,7 @@ module.exports = appInfo => {
   // 允许任何IP访问
   config.cluster = {
     listen: {
-      hostname: '0.0.0.0',
+      hostname: '60.205.191.215',
       port: 7001,
     }
   };
