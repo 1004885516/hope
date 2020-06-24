@@ -1,7 +1,7 @@
 'use strict';
 
 
-const { env } = require('./env')
+const env = process.env.NODE_ENV;
 const upload_path = env === 'env' ? 'D:/nginx/nginxServer/static' : '/root/nginx/upload';
 const upload_url = env === 'env' ? 'http://127.0.0.1:8089' : '60.205.191.215'
 
