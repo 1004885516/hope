@@ -3,7 +3,7 @@
 
 const env = process.env.NODE_ENV;
 const upload_path = env === 'development' ? 'D:/nginx/nginxServer/static' : '/root/nginx/upload';
-const upload_url = env === 'development' ? 'http://127.0.0.1:8089' : '60.205.191.215/upload'
+const upload_url = env === 'development' ? 'http://127.0.0.1:8089' : 'http://60.205.191.215/upload'
 
 exports.PROJECT_FIELD = {
 
