@@ -17,7 +17,7 @@ async function verifyUser (ctx, next) {
   if (token) {
 
     const userdata = jwt.verify(token, ctx.app.config.secret_keys.usersecret)
-    console.log('userdata', userdata)
+
     const user = await ctx.model.User.findOne({ username: userdata.username });
 
     if (!user) {
