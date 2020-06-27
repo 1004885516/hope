@@ -38,7 +38,8 @@ const getBookListSchema = Joi.object({
   title: Joi.string().allow(''),
   author: Joi.string().allow(''),
   pages: Joi.number().required(),
-  pageSize: Joi.number().required()
+  pageSize: Joi.number().required(),
+  sortQuery: Joi.object()
 })
 module.exports = {
   bookSchema,

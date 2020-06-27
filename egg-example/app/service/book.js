@@ -206,7 +206,7 @@ class BookService extends Service {
 
     ctx.logger.info(`getBookList title:${reqBody}`);
 
-    const { title, author, category, pages, pageSize } = reqBody;
+    const { title, author, category, pages, pageSize, sortQuery } = reqBody;
     const find = {};
     if (title) {
       find.title = { $regex: title };
@@ -223,6 +223,7 @@ class BookService extends Service {
     const query = {
       find: find,
       select: { '__v': 0 },
+      sort: sortQuery,
       $limit: _pageSize,
       $skip: (_pages - 1) * _pageSize
     };
